@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>בית הקולנוע — הרשמה</title>
+    <meta name="description" content="ספריית הסרטים והסדרות שלנו. הרשמה לקבלת גישה." />
+    <link rel="icon" href="icon.png" />
+    <style>
+      :root {
+        --bg: #08080c;
+        --surface: #14141d;
+        --line: rgba(255, 255, 255, 0.09);
+        --text: #f3f0ea;
+        --muted: #9c99a8;
+        --faint: #6c6a78;
+        --gold: #e5b567;
+        --gold-2: #d08c3c;
+        --ok: #57c08a;
+        --danger: #e0654f;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; min-height: 100%; }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Heebo', 'Segoe UI', system-ui, sans-serif;
+        line-height: 1.6;
+        display: grid;
+        place-items: center;
+        padding: 28px 18px 60px;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* אלומת אור של מקרן */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: -20% 30% auto -10%;
+        height: 120vh;
+        background: conic-gradient(from 200deg at 0% 0%,
+          transparent 0deg, rgba(229,181,103,.10) 12deg, transparent 26deg);
+        pointer-events: none;
+        filter: blur(6px);
+      }
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(70% 50% at 50% -10%, rgba(229,181,103,.13), transparent 62%);
+        pointer-events: none;
+      }
+
+      .card {
+        position: relative;
+        z-index: 1;
+        width: min(560px, 100%);
+        background: linear-gradient(180deg, rgba(24,24,34,.96), rgba(16,16,23,.96));
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 40px 34px 34px;
+        box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .95);
+        animation: rise .5s cubic-bezier(.22,1,.36,1);
+      }
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(18px); }
+      }
+
+      .mark {
+        width: 76px; height: 76px;
+        border-radius: 22px;
+        margin: 0 auto 20px;
+        display: grid; place-items: center;
+        font-size: 38px;
+        background: linear-gradient(140deg, var(--gold), var(--gold-2));
+        box-shadow: 0 18px 44px -16px rgba(229, 181, 103, .75);
+      }
+      h1 {
+        font-size: 30px; font-weight: 800; letter-spacing: -.03em;
+        margin: 0 0 8px; text-align: center;
+      }
+      .lead { color: var(--muted); text-align: center; margin: 0 0 30px; }
+
+      .field { margin-bottom: 18px; }
+      label { display: block; font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 7px; }
+      input {
+        width: 100%; height: 48px; padding: 0 15px;
+        border-radius: 12px; background: #0e0e15;
+        border: 1px solid var(--line); color: var(--text);
+        font: inherit; transition: border-color .16s, box-shadow .16s;
+      }
+      input::placeholder { color: var(--faint); }
+      input:focus {
+        outline: none;
+        border-color: rgba(229, 181, 103, .6);
+        box-shadow: 0 0 0 4px rgba(229, 181, 103, .1);
+      }
+      input.ltr { direction: ltr; text-align: left; }
+      input[aria-invalid='true'] { border-color: rgba(224, 101, 79, .6); }
+
+      .hint { font-size: 12.5px; color: var(--faint); margin-top: 7px; }
+
+      button {
+        width: 100%; height: 50px; margin-top: 8px;
+        border: none; border-radius: 12px; cursor: pointer;
+        font: inherit; font-weight: 800; font-size: 16px;
+        color: #1a1206;
+        background: linear-gradient(120deg, var(--gold), var(--gold-2));
+        box-shadow: 0 14px 30px -14px rgba(229, 181, 103, .9);
+        transition: transform .15s, filter .15s;
+      }
+      button:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.06); }
+      button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+      .note {
+        margin-top: 22px; padding: 15px 17px;
+        background: #0e0e15; border: 1px solid var(--line);
+        border-radius: 14px; font-size: 13.5px; color: var(--muted);
+      }
+      .note strong { color: var(--text); }
+      .msg { margin-top: 18px; padding: 15px 17px; border-radius: 14px; font-size: 14.5px; display: none; }
+      .msg.show { display: block; animation: rise .3s; }
+      .msg.ok { background: rgba(87,192,138,.1); border: 1px solid rgba(87,192,138,.4); }
+      .msg.bad { background: rgba(224,101,79,.1); border: 1px solid rgba(224,101,79,.4); }
+
+      .done { text-align: center; }
+      .done .big { font-size: 46px; margin-bottom: 10px; }
+      a { color: var(--gold); }
+      footer { margin-top: 26px; text-align: center; font-size: 12.5px; color: var(--faint); }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <div id="form-view">
+        <div class="mark">🎬</div>
+        <h1>בית הקולנוע</h1>
+        <p class="lead">כל הסרטים והסדרות שלנו, במקום אחד.<br />השאירו פרטים וניתן לכם גישה.</p>
+
+        <form id="signup" novalidate>
+          <div class="field">
+            <label for="name">שם מלא</label>
+            <input id="name" name="name" required autocomplete="name" placeholder="ישראל ישראלי" />
+          </div>
+
+          <div class="field">
+            <label for="email">כתובת Gmail</label>
+            <input
+              id="email" name="email" type="email" required class="ltr"
+              autocomplete="email" placeholder="you@gmail.com" dir="ltr"
+            />
+            <div class="hint">
+              חייבת להיות אותה כתובת שאיתה תתחברו לתוכנה. Gmail מתעלמת מנקודות
+              ומסיומות <code>+</code>, אז זה לא משנה איך תכתבו אותה.
+            </div>
+          </div>
+
+          <button type="submit" id="submit">שליחת בקשה</button>
+        </form>
+
+        <div class="msg" id="msg"></div>
+
+        <div class="note">
+          <strong>מה קורה אחר כך:</strong> הבקשה נשלחת לאישור. אחרי שתאושרו, מורידים את
+          התוכנה ומתחברים עם אותו חשבון Google — והספרייה נפתחת.
+        </div>
+      </div>
+
+      <div id="done-view" class="done" style="display: none">
+        <div class="big">🍿</div>
+        <h1>הבקשה נשלחה</h1>
+        <p class="lead">
+          נאשר אותך בקרוב. עד אז אפשר כבר להוריד את התוכנה —<br />
+          ההתחברות תעבוד ברגע שהאישור ייכנס.
+        </p>
+        <a
+          id="download"
+          href="https://github.com/5645hm-a11y/beit-hakolnoa-releases/releases/latest/download/BeitHakolnoa-1.0.0-setup.exe"
+        >
+          <button type="button">הורדת בית הקולנוע ל-Windows</button>
+        </a>
+      </div>
+
+      <footer>בית הקולנוע · לשימוש אישי</footer>
+    </main>
+
+    <script>
+      // כתובת הטופס של Google Forms ומזהי השדות בו.
+      // איך משיגים אותם: ראו CONFIG בקובץ README של הריפו.
+      const FORM = {
+        action: 'REPLACE_WITH_FORM_ACTION_URL',
+        nameField: 'REPLACE_WITH_NAME_ENTRY_ID',
+        emailField: 'REPLACE_WITH_EMAIL_ENTRY_ID'
+      }
+
+      const form = document.getElementById('signup')
+      const msg = document.getElementById('msg')
+      const btn = document.getElementById('submit')
+      const emailInput = document.getElementById('email')
+
+      function show(text, kind) {
+        msg.textContent = text
+        msg.className = 'msg show ' + kind
+      }
+
+      function validEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim())
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+        const name = document.getElementById('name').value.trim()
+        const email = emailInput.value.trim()
+
+        emailInput.setAttribute('aria-invalid', 'false')
+        if (!name) return show('צריך למלא שם מלא.', 'bad')
+        if (!validEmail(email)) {
+          emailInput.setAttribute('aria-invalid', 'true')
+          return show('כתובת המייל לא נראית תקינה.', 'bad')
+        }
+        if (!/@(gmail|googlemail)\.com$/i.test(email)) {
+          emailInput.setAttribute('aria-invalid', 'true')
+          return show('ההתחברות לתוכנה היא דרך Google, אז צריך כתובת Gmail.', 'bad')
+        }
+        if (FORM.action.startsWith('REPLACE_')) {
+          return show('הטופס עדיין לא חובר. פנו למנהל.', 'bad')
+        }
+
+        btn.disabled = true
+        btn.textContent = 'שולח…'
+
+        // Google Forms לא מחזיר CORS, ולכן שולחים no-cors ומניחים הצלחה.
+        // זו הדרך הנתמכת לשליחה מדף חיצוני.
+        const body = new FormData()
+        body.append(FORM.nameField, name)
+        body.append(FORM.emailField, email)
+
+        try {
+          await fetch(FORM.action, { method: 'POST', mode: 'no-cors', body })
+          document.getElementById('form-view').style.display = 'none'
+          document.getElementById('done-view').style.display = 'block'
+        } catch {
+          btn.disabled = false
+          btn.textContent = 'שליחת בקשה'
+          show('השליחה נכשלה. בדקו את החיבור לאינטרנט ונסו שוב.', 'bad')
+        }
+      })
+    </script>
+  </body>
+</html>
