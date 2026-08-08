@@ -1,0 +1,8 @@
+{
+  "_comment": "המאגר המשותף ומועד סגירתו. אחרי המועד התוכנה מתעלמת מ-roots לחלוטין. מחיקת roots כאן סוגרת אותו מיד, בלי להמתין למועד ובלי גרסה חדשה.",
+  "sunsetAt": "2026-08-10T00:00:00+03:00",
+  "roots": [
+    "1RYkXp44rUVsZEL-W1nPsXd6i7yzOZtCZ",
+    "1PuhRDHpEYjVWFWk92cDgIn9cu-teczdZ"
+  ]
+}
